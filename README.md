@@ -1,98 +1,101 @@
-# Local-README Generator 🤖
+# Local-README Generator & Developer Assistant Suite 🤖💬
 
-An offline, privacy-first developer utility that leverages local Large Language Models (LLMs) and deep recursive Abstract Syntax Tree (AST) analysis to automatically compile enterprise-grade repository documentation.
+An offline, privacy-first command-line utility that integrates deterministic static code analysis with real-time interactive AI chat environments leveraging local Large Language Models (LLMs).
 
 ---
 
-## 🏗️ System Architecture & Overview
+## 🏗️ Dual-Engine Architecture Overview
 
-Unlike traditional documentation utilities that rely on fragile regular expressions (Regex) or expensive cloud API keys, this system executes deterministic static program analysis to optimize context mapping before handing off to a local inference pipeline.
+This platform operates as a multi-mode command-line tool. It decouples high-throughput static tree parsing from dynamic conversational state-tracking loops, piping structured payloads to a localized inference machine.
 
 ```mermaid
 graph TD
-    A[👤 Developer CLI] -->|python generator.py -d path| B(🚀 Entry Point)
-    B --> C{🔍 Type Check}
-    C -->|Single File| D[📄 Direct File Reader]
-    C -->|Directory Tree| E[📂 os.walk Scanner]
-    D & E --> F[🧠 ast.NodeVisitor Engine]
-    F -->|Deep Recursive Traversal| G[📝 Structural Token Map]
-    G --> H[🔒 Offline Ollama Client SDK]
-    H -->|Local Inference via llama3.2| I[🎉 Factual README.md]
+    CLI[👤 Terminal Entry Point] -->|Parsing Mode| TargetScan[📂 Recursive AST Scanner]
+    CLI -->|Chatbot Mode| ChatEngine[💬 Bounded Memory Queue]
+    
+    TargetScan -->|Extracts Structure/Docs| TokenMap[📝 Static Code blueprint]
+    ChatEngine -->|FIFO Sliding Window| ContextBuffer[🧠 Context Memory Array]
+    
+    TokenMap & ContextBuffer -->|Native IPC Stream| LocalOllama[🔒 Offline Ollama Server Engine]
+    LocalOllama -->|Llama 3.2 3B Model| Output[🎉 Factual README / Instant Chat Responses]
 ```
 
-### 1. Recursive Static Program Analysis
-The engine implements a customized `ast.NodeVisitor` subclass to walk a compilation unit's tree structure recursively. This architectural pattern guarantees 100% traversal depth, catching deeply nested inner functions, class structures, method scopes, and docstrings cleanly without executing untrusted logic.
+### 1. Mode A: Deterministic Static Code Analysis
+The analysis layer maps out systems architecture cleanly using Python's native `ast.NodeVisitor`. It traverses code bases recursively to map class definitions, function signatures, and lexical docstrings without executing untrusted compiler components. Non-Python configurations stream via a line-buffered reader to keep data allocations completely boundary-safe.
 
-### 2. Line-Buffered Content Streaming
-To read non-Python scripts safely, the system replaces naive character slicing with a hardened line-buffered reading method. By reading up to a fixed line boundary, the tool ensures data collection cuts off strictly on clear newline (`\n`) characters, eliminating malformed byte strings.
+### 2. Mode B: Sliding-Window Conversational State Memory
+The interactive chatbot core bypasses RAM context wind-up using a bounded First-In-First-Out (FIFO) sliding-window ring buffer. When conversations exceed target constraints, the queue drops the oldest Q&A pair while anchoring the initial system rules, keeping model performance incredibly fast.
 
-### 3. Data Integrity & Overwrite Gateways
-A pre-flight defensive validation block guards the file storage system. If the generator detects a pre-existing documentation file at the targeted output path, it halts operation and triggers an explicit warning, requesting user clearance before writing data.
-
----
-
-## 💻 Technical Stack
-
-*   **Core Engine:** Python 3 standard library (`ast`, `argparse`, `threading`, `sys`, `os`)
-*   **AI Orchestration:** Ollama Python SDK Client
-*   **Inference Model:** Llama 3.2 (3B Parameters, running 100% locally and offline)
-*   **Documentation Target:** GitHub Flavored Markdown (GFM)
+### 3. Non-Blocking Multithreaded UI
+Synchronous model inference processing is separated from your host machine console window using primitive `threading` routines. This allows a frames-per-second stable daemon animation (`loading_animation`) to loop smoothly alongside generation.
 
 ---
 
-## ⚙️ Installation & Environment Setup
+## 💻 Technical Infrastructure Profile
 
-Ensure your local machine has the Ollama background engine running before starting configuration:
+*   **Core Systems Platform:** Python 3 standard library (`ast`, `argparse`, `threading`, `sys`, `os`, `time`)
+*   **Local AI Framework Orchestration:** Ollama Python SDK Client Core
+*   **Host Inference Deep Learning Model:** Llama 3.2 (3-Billion Parameter Model running completely offline)
+*   **Secure Audit Trail Component:** Local Session File Serializer (`.ai_chat_history/`)
+
+---
+
+## ⚙️ Installation & Environment Sandbox Setup
+
+Ensure your host operating system has the Ollama service running natively before launching setup:
 ```bash
 ollama run llama3.2
 ```
 
-### Setup Steps
-1. Navigate to your project root folder:
+### Repository Setup
+1. Clone or clone your files into your active working directory:
    ```bash
    cd ~/Developer/readme-generator
    ```
-2. Initialize and activate your isolated virtual environment sandbox:
+2. Initialize and activate an isolated virtual environment sandbox:
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    ```
-3. Install the required client dependencies:
+3. Install the required external execution packages:
    ```bash
    pip install -r requirements.txt
    ```
 
 ---
 
-## 🚀 Usage Guide
+## 🚀 Precise Multi-Mode Usage Guide
 
 Always execute the application from within your active Python virtual environment sandbox (`venv`).
 
-### Command Line Flags
-*   `-d / --dir`: Path to the targeted directory structure or specific source file to analyze.
-*   `-o / --output`: Redirection path to save the generated `README.md` file.
-*   `-i / --interactive`: Enables user metadata configuration injection prompts.
+### 📝 Mode 1: Repository Documentation Generator
 
-### Production Syntax Examples
+Execute the application with path inputs to run structural analysis pipelines:
 
-**Basic Automated Run (Current Directory):**
 ```bash
-python generator.py -d .
+# Scan a directory structure or individual file path automatically
+python generator.py -d /path/to/target
+
+# Execute inside interactive metadata configuration mapping mode
+python generator.py -i -d .
+
+# Redirect your final generated documentation file to a different folder
+python generator.py -d . -o /path/to/output_directory/
 ```
 
-**Targeting an Individual Script File:**
+### 💬 Mode 2: Bounded Terminal AI Chatbot
+
+Add the `-c` or `--chat` switch to bypass the folder scanner and launch the interactive chatbot container console immediately:
+
 ```bash
-python generator.py -d /path/to/project/target_script.py
+python generator.py --chat
 ```
 
-**Interactive Mode with Custom Output Targets:**
-```bash
-python generator.py -i -d /path/to/project -o /path/to/output_folder/
-```
-*Note: The interface features a fast conditional intercept. When asked `Do you want to enter custom project metadata? (y/n):`, typing `n` immediately skips the forms and launches automated AI rendering.*
+*   **Persistent Local Logging:** Your text sessions are automatically serialized into timestamped files inside the hidden `.ai_chat_history/` directory.
+*   **Console Shortcuts:** Type `clear` to scrub the conversational window memory, or type `exit` / `quit` to return back to your terminal framework safely.
 
 ---
 
 ## 📄 Open-Source License
 
-This project is open-source and distributed under the terms of the **MIT License**.
+This project architecture is distributed completely free under the **MIT License**.
