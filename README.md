@@ -1,37 +1,47 @@
-# generator.py
-## Project Overview
+# Infer
+## System Architecture
 
-generator.py is a Python script designed to create a README.md file for a project. It uses various functions to process the project's node, parse its Python Abstract Syntax Tree (AST), extract user metadata, and generate high-quality documentation.
+Infer is a Python-based tool that runs locally and offline, utilizing the native `ast` module for parsing Abstract Syntax Tree (AST) representations of Python compilation units. The script employs a non-blocking terminal animation loop facilitated by the `threading` module to provide an interactive user experience.
 
-### Core Architecture/Features
+The tool's core functionality involves deterministic scanning of classes, functions, and docstrings from Python files without executing unsafe code. This is achieved through AST parsing, which allows for precise analysis and extraction of relevant project context.
 
-The core architecture of generator.py consists of several key features:
+The offline model, powered by the local 'ollama' library running a 'llama3.2' model, processes the clean blueprint context generated from the parsed AST to produce meaningful insights or recommendations.
 
-*   **Node Processing**: The `process_node()` function is responsible for processing individual nodes within the project's structure.
-*   **Python AST Parsing**: The `parse_python_ast()` function parses the Python Abstract Syntax Tree to gather relevant information about the project's codebase.
-*   **User Metadata Extraction**: The `get_user_metadata()` function extracts essential user metadata, such as author and license information.
-*   **Loading Animation**: The `loading_animation()` function displays a loading animation during the generation process.
+## Technical Stack
 
-### Tech Stack
+Infer relies on the following technical components:
 
-generator.py utilizes the following technologies:
+*   Python 3: The primary programming language used for development and execution.
+*   `ast` module: Utilized for parsing Abstract Syntax Tree representations of Python compilation units.
+*   `threading` module: Facilitates a non-blocking terminal animation loop to enhance user interaction.
+*   'ollama' library: Powers the offline model, leveraging a pre-trained 'llama3.2' model for context analysis and recommendations.
 
-*   Python 3.x
-*   Markdown for documentation
-*   Abstract Syntax Tree (AST) parsing for code analysis
+## Installation & Environment Setup
 
-## Setup Instructions
+To utilize Infer, follow these steps:
 
-To use generator.py, follow these steps:
+1.  Install Python 3 on your system if not already present.
+2.  Ensure the necessary libraries are installed:
+    *   `ast` module: Part of the standard library in Python 3.
+    *   'ollama' library: Can be installed via pip using the command `pip install ollama`.
+3.  Set up a suitable environment for Infer to operate within.
 
-1.  Save generator.py to a directory of your choice.
-2.  Create a new project within generator.py by calling the `main()` function.
-3.  The script will generate a README.md file based on the project's metadata and structure.
+## Usage Guide
 
-### Extra User Notes
+### Command Line Flags
 
-generator.py includes extra user notes, including support for creating README.md files.
+Infer accepts the following command line flags:
 
-## License
+*   `-d/--dir`: Specifies the path to the directory containing Python files to analyze.
+*   `-o/--output`: Defines the output location for the generated insights or recommendations.
+*   `-i/--interactive`: Enables user configuration and interactive mode.
 
-Since this is an internal project, it does not have a formal license assigned to it.
+### Usage Example
+
+```bash
+python infer.py -d /path/to/project -o /path/to/output -i
+```
+
+## Open-Source License
+
+Infer is licensed under the MIT license.

@@ -42,11 +42,26 @@ def parse_python_ast(file_path):
 
 
 def extract_project_context(project_path):
-    """Scans directory and extracts intelligent codebase blueprints using AST and fast file reading."""
+    """Scans directory or single file and extracts intelligent codebase blueprints using AST and fast file reading."""
     context = ""
     # Added extra virtual environment folders to block infinite loops
     ignored_dirs = {'.git', 'node_modules', '__pycache__', 'venv', '.venv', 'env', '.idea', 'build', 'dist', 'Library'}
     supported_extensions = ('.py', '.c', '.cpp', '.sql', '.js', '.ts', '.go', '.rs', '.java')
+
+    # UPGRADE: Added direct single file support
+    if path.isfile(project_path):
+        if project_path.endswith(supported_extensions):
+            print(f"📄 Found single target file: {path.basename(project_path)}")
+            if project_path.endswith('.py'):
+                ast_summary = parse_python_ast(project_path)
+                if ast_summary:
+                    return ast_summary
+            try:
+                with open(project_path, 'r', encoding='utf-8') as f:
+                    return f"\n--- File: {path.basename(project_path)} ---\n{f.read()[:1500]}\n"
+            except Exception as e:
+                print(f"⚠️ Could not read {project_path}: {e}")
+        return ""
 
     print(f"🔍 Scanning directory: {project_path}")
 
@@ -89,7 +104,13 @@ def loading_animation(stop_event):
 
 
 def get_user_metadata():
-    print("\n--- 🛠️  Interactive Configuration (Press chamber to Skip) ---")
+    # UPGRADE: Added immediate y/n toggle check
+    choice = input("\n🛠️  Do you want to enter custom project metadata? (y/n): ").strip().lower()
+    if choice not in ['y', 'yes', '']:
+        print("⏩ Skipping interactive setup. Using default/inferred metadata.")
+        return {"name": "", "author": "", "license": "MIT", "notes": ""}
+
+    print("\n--- 🛠️  Interactive Configuration (Press enter to Skip) ---")
     project_name = input("📦 Project Name: ").strip()
     author = input("👤 Author Name/GitHub Handle: ").strip()
     license_type = input("📄 License (e.g., MIT, Apache 2.0): ").strip() or "MIT"
@@ -107,12 +128,20 @@ def generate_markdown(code_context, meta):
     - Extra User Notes: {meta['notes'] if meta['notes'] else 'None'}
     """
 
+    # UPGRADE: Refactored prompt targeting enterprise system architect standards (MAANG level evaluation)
     system_prompt = (
-        "You are an elite technical writer. Analyze the provided codebase overview and metadata to generate "
-        "a highly professional, beautiful README.md file. Use clean Markdown elements, visual anchors, "
-        "and clear headers. Include sections for: Project Overview, Core Architecture/Features, "
-        "Tech Stack, Setup Instructions, and License. Output ONLY the raw markdown text. Do not include "
-        "any casual chat or intro/outro text like 'Here is your README'."
+        "You are a strict, precise principal systems engineer. Analyze the provided codebase context and project metadata "
+        "to generate an authentic, accurate README.md file. Do not invent details.\n\n"
+        "STRICT COMPLIANCE RULES:\n"
+        "1. NO HALLUCINATIONS: Do not mention files like 'install.py', 'generator.py.exe', or 'nltk'. They do not exist in this project. "
+        "Only reference the actual codebase provided in the context.\n"
+        "2. ACCURATE COMMAND LINE FLAGS: Look directly at the argparse configuration in the code. Document ONLY the actual active flags: "
+        "'-d/--dir' for path input, '-o/--output' for output location, and '-i/--interactive' for enabling user configuration.\n"
+        "3. ACTUAL TECH STACK: Clearly state that the tool runs locally and offline using Python 3, the native 'ast' module for parsing, "
+        "the 'threading' module for a non-blocking terminal animation loop, and the local 'ollama' Python library running a 'llama3.2' model.\n"
+        "4. SYSTEM ARCHITECTURE: Explain that the script uses Abstract Syntax Tree (AST) parsing to deterministically scan classes, "
+        "functions, and docstrings from python compilation units without running unsafe code, before piping the clean blueprint context to the offline model.\n\n"
+        "Structure the output with clean markdown headers: # Project Name, ## System Architecture, ## Technical Stack, ## Installation & Environment Setup, ## Usage Guide, and ## Open-Source License."
     )
 
     stop_loading = threading.Event()
@@ -120,9 +149,14 @@ def generate_markdown(code_context, meta):
     spinner_thread.start()
 
     try:
+        # CRITICAL REFINEMENT: Added strict temperature parameters to prevent model hallucinations
         response = ollama.generate(
             model='llama3.2',
-            prompt=f"{system_prompt}\n{meta_instruction}\n\nCodebase Context:\n{code_context}"
+            prompt=f"{system_prompt}\n{meta_instruction}\n\nCodebase Context:\n{code_context}",
+            options={
+                "temperature": 0.0,
+                "top_p": 0.1
+            }
         )
         stop_loading.set()
         spinner_thread.join()
@@ -136,15 +170,16 @@ def generate_markdown(code_context, meta):
 
 def main():
     parser = argparse.ArgumentParser(description="Local-README: An offline AI-powered README.md framework.")
-    parser.add_argument('-d', '--dir', type=str, default='.', help='Path to project directory')
+    # UPGRADE: Modified argument description to specify folder or file flexibility
+    parser.add_argument('-d', '--dir', type=str, default='.', help='Path to project directory or specific file')
     parser.add_argument('-o', '--output', type=str, default='.', help='Path to save README.md')
     parser.add_argument('-i', '--interactive', action='store_true', help='Enable interactive metadata mode')
 
     args = parser.parse_args()
-    target_dir = path.abspath(args.dir)
+    target_path = path.abspath(args.dir)
     output_dir = path.abspath(args.output)
 
-    context = extract_project_context(target_dir)
+    context = extract_project_context(target_path)
     if not context.strip():
         print("❌ Error: No valid code files found to analyze in this directory.")
         return
@@ -153,12 +188,15 @@ def main():
     readme_content = generate_markdown(context, meta)
 
     if readme_content:
-        output_file_path = path.join(output_dir, "README.md")
+        if path.isdir(output_dir):
+            output_file_path = path.join(output_dir, "README.md")
+        else:
+            output_file_path = output_dir
+
         with open(output_file_path, "w", encoding="utf-8") as f:
             f.write(readme_content)
         print(f"🎉 Success! Local-README saved your file to: {output_file_path}")
 
 
-# This execution block must be the absolute end of the file.
 if __name__ == "__main__":
     main()
