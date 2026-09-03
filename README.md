@@ -24,7 +24,7 @@ To utilize generator, follow these steps:
 2.  Ensure the necessary libraries are installed:
     *   `ast` module: Part of the standard library in Python 3.
     *   'ollama' library: Can be installed via pip using the command `pip install ollama`.
-3.  Set up a suitable environment for Infer to operate within.
+3.  Set up a suitable environment for generator to operate within.
 
 ## Usage Guide
 
