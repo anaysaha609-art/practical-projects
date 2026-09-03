@@ -1,4 +1,4 @@
-# Infer
+# Generator
 ## System Architecture
 
 generator is a Python-based tool that runs locally and offline, utilizing the native `ast` module for parsing Abstract Syntax Tree (AST) representations of Python compilation units. The script employs a non-blocking terminal animation loop facilitated by the `threading` module to provide an interactive user experience.
