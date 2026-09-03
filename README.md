@@ -1,37 +1,79 @@
-# generator.py
+# Automated Generator
+========================
+[Project Name](https://github.com/anaysaha609/automated-generator): A tool that automates the process of generating markdown files based on a given project's structure and metadata.
+
 ## Project Overview
+-------------------
 
-generator.py is a Python script designed to create a README.md file for a project. It uses various functions to process the project's node, parse its Python Abstract Syntax Tree (AST), extract user metadata, and generate high-quality documentation.
+The automated generator is designed to simplify the process of creating professional-looking documentation for projects. It takes in various inputs, such as code structure, comments, and metadata, and outputs well-formatted markdown files that can be easily shared or published.
 
-### Core Architecture/Features
+## Core Architecture/Features
+-----------------------------
 
-The core architecture of generator.py consists of several key features:
+*   **Node Processing**: Breaks down project structures into manageable chunks to create a comprehensive overview.
+*   **Python AST Parsing**: Analyzes code structure and syntax to extract relevant information.
+*   **User Metadata Handling**: Retrieves essential metadata from the user, such as author names and descriptions.
+*   **Markdown Generation**: Converts processed data into visually appealing markdown files.
 
-*   **Node Processing**: The `process_node()` function is responsible for processing individual nodes within the project's structure.
-*   **Python AST Parsing**: The `parse_python_ast()` function parses the Python Abstract Syntax Tree to gather relevant information about the project's codebase.
-*   **User Metadata Extraction**: The `get_user_metadata()` function extracts essential user metadata, such as author and license information.
-*   **Loading Animation**: The `loading_animation()` function displays a loading animation during the generation process.
+## Tech Stack
+-------------
 
-### Tech Stack
+🟥 **Python** 🟦
+*   **Language**: Python 3.x for scripting and logic handling.
+*   **Libraries**: `ast` (Abstract Syntax Trees), `markdown` (text formatting).
 
-generator.py utilizes the following technologies:
+🟩 **Shell Scripting** 🎯
+*   **Scripting Language**: Bash or PowerShell for automation.
 
-*   Python 3.x
-*   Markdown for documentation
-*   Abstract Syntax Tree (AST) parsing for code analysis
+🔵 **Operating Systems** 🔹
+| OS | Instructions |
+| --- | --- |
+| Mac/Linux/WINDOWS | See below |
 
 ## Setup Instructions
+---------------------
 
-To use generator.py, follow these steps:
+### Linux (Bash)
 
-1.  Save generator.py to a directory of your choice.
-2.  Create a new project within generator.py by calling the `main()` function.
-3.  The script will generate a README.md file based on the project's metadata and structure.
+1.  Clone the repository using `git clone https://github.com/anaysaha609/automated-generator.git`
+2.  Navigate to the project directory with `cd automated-generator`
+3.  Run the script with `bash generate.sh` and follow prompts.
 
-### Extra User Notes
+### Mac (Terminal)
 
-generator.py includes extra user notes, including support for creating README.md files.
+```bash
+git clone https://github.com/anaysaha609/automated-generator.git
+cd automated-generator
+./generate.sh && follow prompts.
+```
+
+### Windows (Command Prompt)
+
+```cmd
+git clone https://github.com/anaysaha609/automated-generator.git
+cd automated-generator
+run generate.bat && follow prompts.
+```
+
+## How to Use It
+-----------------
+
+1.  **Initiate Workflow**: Run the script using the provided instructions for your OS.
+2.  **Input Project Context**: Answer the required questions and provide necessary information when prompted.
+3.  **Select Output Format**: Choose desired markdown format (e.g., GitHub Flavored Markdown).
+4.  **Review Outputs**: Inspect generated files to ensure accuracy.
 
 ## License
+---------
 
-Since this is an internal project, it does not have a formal license assigned to it.
+[Beginner](https://choosealicense.com/beginner/): A permissive license for simple projects, ideal for beginners.
+
+### Workflow Diagram 🛠️
+
+A --> B --> C
+*   A: Input project context and metadata.
+*   B: Process node and extract relevant data.
+*   C: Generate markdown file using provided formats.
+
+## Extra User Notes 👍
+Think of your project as a LEGO building. The automated generator is like a set of instructions that helps you build the structure, but you still need to add colors (metadata) and decorations to make it look pretty 🎨. This tool simplifies the process by breaking down the complex into manageable steps, making it easier for everyone involved 👫.
