@@ -89,13 +89,20 @@ def loading_animation(stop_event):
 
 
 def get_user_metadata():
-    print("\n--- 🛠️  Interactive Configuration (Press chamber to Skip) ---")
+    # Highlighted Fix: Quick y/n toggle
+    choice = input("\n🛠️  Do you want to enter custom project metadata? (y/n): ").strip().lower()
+    if choice not in ['y', 'yes', '']:
+        print("⏩ Skipping interactive setup. Using default/inferred metadata.")
+        return {"name": "", "author": "", "license": "MIT", "notes": ""}
+
+    print("\n--- 🛠️  Interactive Configuration ---")
     project_name = input("📦 Project Name: ").strip()
     author = input("👤 Author Name/GitHub Handle: ").strip()
     license_type = input("📄 License (e.g., MIT, Apache 2.0): ").strip() or "MIT"
     special_notes = input("💡 Any custom notes/features to highlight?: ").strip()
 
     return {"name": project_name, "author": author, "license": license_type, "notes": special_notes}
+
 
 
 def generate_markdown(code_context, meta):
@@ -111,8 +118,8 @@ def generate_markdown(code_context, meta):
         "You are an elite technical writer. Analyze the provided codebase overview and metadata to generate "
         "a highly professional, beautiful README.md file. Use clean Markdown elements, visual anchors, "
         "and clear headers. Include sections for: Project Overview, Core Architecture/Features, "
-        "Tech Stack, Setup Instructions, and License. Output ONLY the raw markdown text. Do not include "
-        "any casual chat or intro/outro text like 'Here is your README'."
+        "Tech Stack, Setup Instructions, How to Use It (with clear terminal command examples like in mac,windows,linux especially etc.), and License. "
+        "Output ONLY the raw markdown text. Do not include any casual chat or intro/outro text like 'Here is your README'."
     )
 
     stop_loading = threading.Event()
