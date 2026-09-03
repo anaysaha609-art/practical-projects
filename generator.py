@@ -170,7 +170,6 @@ def generate_markdown(code_context, meta):
 
 def main():
     parser = argparse.ArgumentParser(description="Local-README: An offline AI-powered README.md framework.")
-    # UPGRADE: Modified argument description to specify folder or file flexibility
     parser.add_argument('-d', '--dir', type=str, default='.', help='Path to project directory or specific file')
     parser.add_argument('-o', '--output', type=str, default='.', help='Path to save README.md')
     parser.add_argument('-i', '--interactive', action='store_true', help='Enable interactive metadata mode')
@@ -181,18 +180,27 @@ def main():
 
     context = extract_project_context(target_path)
     if not context.strip():
-        print("❌ Error: No valid code files found to analyze in this directory.")
+        print("❌ Error: No valid code files found to analyze at this path.")
         return
+
+    # DETERMINE EXACT OUTPUT PATH BOUNDARIES
+    if path.isdir(output_dir):
+        output_file_path = path.join(output_dir, "README.md")
+    else:
+        output_file_path = output_dir
+
+    # BRUTAL POV PROTECTION: Prevent accidental data destruction
+    if path.exists(output_file_path):
+        print(f"\n⚠️  CRITICAL WARNING: A documentation file already exists at: {output_file_path}")
+        confirm = input("💥 Do you want to overwrite this file? This action cannot be undone! (y/n): ").strip().lower()
+        if confirm not in ['y', 'yes']:
+            print("🛑 Execution aborted safely. Existing file preserved. Goodbye!")
+            return
 
     meta = get_user_metadata() if args.interactive else {"name": "", "author": "", "license": "MIT", "notes": ""}
     readme_content = generate_markdown(context, meta)
 
     if readme_content:
-        if path.isdir(output_dir):
-            output_file_path = path.join(output_dir, "README.md")
-        else:
-            output_file_path = output_dir
-
         with open(output_file_path, "w", encoding="utf-8") as f:
             f.write(readme_content)
         print(f"🎉 Success! Local-README saved your file to: {output_file_path}")
